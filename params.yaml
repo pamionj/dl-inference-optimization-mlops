@@ -1,0 +1,34 @@
+# Parámetros versionados del pipeline MLOps (DVC lee este archivo)
+data:
+  dataset_dir: data/dataset_frutas
+  validation_split: 0.2
+  seed: 42
+  img_size: 224
+
+augmentation:
+  rotation_deg: 20
+  zoom: 0.1
+  shift: 0.1
+
+train:
+  label_smoothing: 0.1
+  batch_size: 16
+  head_epochs: 25
+  head_learning_rate: 0.0005
+  fine_tune_epochs: 8
+  fine_tune_learning_rate: 0.00001
+  fine_tune_layers: 15
+  dropout_1: 0.4
+  dense_units: 256
+  dropout_2: 0.3
+
+quantize:
+  method: static          # static (QDQ + calibración) | dynamic
+  calibration_images: 40
+  per_channel: true
+
+serving:
+  max_batch_size: 8
+  max_wait_ms: 10
+  accuracy_gate: 0.65     # exactitud mínima exigida en validación (CI); dataset Eva3 ruidoso
+  latency_p95_gate_ms: 400  # latencia p95 máxima batch=1 (CI, runner sin GPU)

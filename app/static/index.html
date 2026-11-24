@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clasificador de Frutas — Eva4</title>
+<style>
+ body{font-family:Arial,Helvetica,sans-serif;max-width:760px;margin:32px auto;padding:0 16px;color:#222}
+ h1{color:#1B365D;font-size:22px} .card{border:1px solid #ddd;border-radius:8px;padding:16px;margin-top:16px}
+ button{background:#1B365D;color:#fff;border:0;border-radius:6px;padding:8px 16px;cursor:pointer}
+ img#preview{max-width:240px;max-height:240px;display:none;margin-top:12px;border-radius:6px}
+ .bar{height:14px;background:#1B365D;border-radius:3px} td{padding:3px 8px} .muted{color:#666;font-size:13px}
+</style>
+</head>
+<body>
+<h1>Clasificador de Frutas ResNet50 INT8 (ONNX Runtime)</h1>
+<p class="muted">Evaluación N°4 — Machine Learning (TIEL26). API REST FastAPI: <a href="/docs">/docs</a> · <a href="/model/info">/model/info</a> · <a href="/metrics">/metrics</a></p>
+<div class="card">
+ <input type="file" id="file" accept="image/*"> <button id="send">Clasificar</button>
+ <br><img id="preview" alt="vista previa">
+ <div id="result"></div>
+</div>
+<script>
+const f=document.getElementById('file'),pv=document.getElementById('preview'),out=document.getElementById('result');
+f.onchange=()=>{if(f.files[0]){pv.src=URL.createObjectURL(f.files[0]);pv.style.display='block';}};
+document.getElementById('send').onclick=async()=>{
+ if(!f.files[0]){out.textContent='Seleccione una imagen.';return;}
+ const fd=new FormData();fd.append('file',f.files[0]);out.textContent='Procesando...';
+ const r=await fetch('/predict',{method:'POST',body:fd});const j=await r.json();
+ if(!r.ok){out.textContent='Error '+r.status+': '+j.detail;return;}
+ const p=j.prediction;let rows='';
+ for(const [k,v] of Object.entries(p.probabilities).sort((a,b)=>b[1]-a[1]))
+  rows+=`<tr><td>${k}</td><td style="width:300px"><div class="bar" style="width:${(v*100).toFixed(1)}%"></div></td><td>${(v*100).toFixed(1)}%</td></tr>`;
+ out.innerHTML=`<h2>${p.label} (${(p.confidence*100).toFixed(1)}%)${p.low_confidence?' — baja confianza':''}</h2>
+  <table>${rows}</table><p class="muted">Inferencia: ${j.inference_ms} ms · Total: ${j.total_ms} ms · Modelo: ${j.model_version}</p>`;
+};
+</script>
+</body>
+</html>

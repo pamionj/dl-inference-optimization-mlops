@@ -1,0 +1,18 @@
+services:
+  fruit-api:
+    build: .
+    image: fruit-classifier-api:latest
+    container_name: fruit-classifier-api
+    ports:
+      - "8000:8000"
+    environment:
+      DYNAMIC_BATCHING: "true"
+      MAX_BATCH_SIZE: "8"
+      MAX_WAIT_MS: "10"
+      ORT_INTRA_OP_THREADS: "2"
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1g
+    restart: unless-stopped

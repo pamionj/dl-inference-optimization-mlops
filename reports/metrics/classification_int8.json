@@ -1,0 +1,84 @@
+{
+  "report": {
+    "frutilla": {
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1-score": 0.8571428571428571,
+      "support": 4.0
+    },
+    "manzana": {
+      "precision": 0.3333333333333333,
+      "recall": 0.5,
+      "f1-score": 0.4,
+      "support": 4.0
+    },
+    "naranja": {
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1-score": 0.6666666666666666,
+      "support": 4.0
+    },
+    "platano": {
+      "precision": 0.6666666666666666,
+      "recall": 1.0,
+      "f1-score": 0.8,
+      "support": 4.0
+    },
+    "uva": {
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1-score": 0.8571428571428571,
+      "support": 4.0
+    },
+    "accuracy": 0.7,
+    "macro avg": {
+      "precision": 0.7999999999999999,
+      "recall": 0.7,
+      "f1-score": 0.7161904761904763,
+      "support": 20.0
+    },
+    "weighted avg": {
+      "precision": 0.7999999999999999,
+      "recall": 0.7,
+      "f1-score": 0.7161904761904763,
+      "support": 20.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      3,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      2,
+      0,
+      2,
+      0
+    ],
+    [
+      0,
+      2,
+      2,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      4,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      0,
+      3
+    ]
+  ]
+}

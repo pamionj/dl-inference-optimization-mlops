@@ -1,0 +1,190 @@
+schema: '2.0'
+stages:
+  train:
+    cmd: python -m pipeline.train
+    deps:
+    - path: app/preprocessing.py
+      hash: md5
+      md5: a938eb1503a136bb5f5d5703ad299f28
+      size: 1156
+    - path: data/dataset_frutas
+      hash: md5
+      md5: 21eeaa3c14c31047fce7b56088c472d3.dir
+      size: 3862063
+      nfiles: 105
+    - path: pipeline/common.py
+      hash: md5
+      md5: 116b280c8f8abfd903dd22d5ee5025c5
+      size: 2354
+    - path: pipeline/train.py
+      hash: md5
+      md5: 86fcc480a8b56c601e6afb9067654601
+      size: 5442
+    params:
+      params.yaml:
+        augmentation:
+          rotation_deg: 20
+          zoom: 0.1
+          shift: 0.1
+        data:
+          dataset_dir: data/dataset_frutas
+          validation_split: 0.2
+          seed: 42
+          img_size: 224
+        train:
+          label_smoothing: 0.1
+          batch_size: 16
+          head_epochs: 25
+          head_learning_rate: 0.0005
+          fine_tune_epochs: 8
+          fine_tune_learning_rate: 1e-05
+          fine_tune_layers: 15
+          dropout_1: 0.4
+          dense_units: 256
+          dropout_2: 0.3
+    outs:
+    - path: models/fruit_resnet50.keras
+      hash: md5
+      md5: 9de61ae51ca6d012844a86dbb6776de5
+      size: 145347718
+    - path: reports/metrics/train_history.json
+      hash: md5
+      md5: 387ed605492ac4437a67ceba564eb47c
+      size: 1789
+    - path: reports/metrics/train_metrics.json
+      hash: md5
+      md5: 63369a7d125fe86aec943d2f34cf0063
+      size: 212
+  export_onnx:
+    cmd: python -m pipeline.export_onnx
+    deps:
+    - path: models/fruit_resnet50.keras
+      hash: md5
+      md5: 9de61ae51ca6d012844a86dbb6776de5
+      size: 145347718
+    - path: pipeline/export_onnx.py
+      hash: md5
+      md5: 5dd330d827c946a123cfd2bc3fa15df7
+      size: 1638
+    outs:
+    - path: models/onnx/fruit_resnet50_fp32.onnx
+      hash: md5
+      md5: f66c2c19b254a8fd63e204b71be15bb2
+      size: 96073842
+    - path: reports/metrics/export_parity.json
+      hash: md5
+      md5: 0356cb70b561aa6707976518002d50a8
+      size: 102
+  quantize:
+    cmd: python -m pipeline.quantize
+    deps:
+    - path: models/onnx/fruit_resnet50_fp32.onnx
+      hash: md5
+      md5: f66c2c19b254a8fd63e204b71be15bb2
+      size: 96073842
+    - path: pipeline/quantize.py
+      hash: md5
+      md5: 9536d865a30ce152a0c5cc3f818e07e0
+      size: 3332
+    params:
+      params.yaml:
+        quantize:
+          method: static
+          calibration_images: 40
+          per_channel: true
+    outs:
+    - path: models/onnx/fruit_resnet50_int8.onnx
+      hash: md5
+      md5: 994b7117d0c194cbcbcda0352f85a37d
+      size: 24621265
+    - path: models/onnx/fruit_resnet50_int8_dynamic.onnx
+      hash: md5
+      md5: 36848f2b5c25a2ec2b1aeb03fa08be95
+      size: 24261009
+    - path: models/onnx/model_metadata.json
+      hash: md5
+      md5: 75ba6b23c796de895fe5a2ed4be383cc
+      size: 514
+  benchmark:
+    cmd: python -m pipeline.benchmark && python -m pipeline.plots
+    deps:
+    - path: models/fruit_resnet50.keras
+      hash: md5
+      md5: 9de61ae51ca6d012844a86dbb6776de5
+      size: 145347718
+    - path: models/onnx/fruit_resnet50_fp32.onnx
+      hash: md5
+      md5: f66c2c19b254a8fd63e204b71be15bb2
+      size: 96073842
+    - path: models/onnx/fruit_resnet50_int8.onnx
+      hash: md5
+      md5: 994b7117d0c194cbcbcda0352f85a37d
+      size: 24621265
+    - path: models/onnx/fruit_resnet50_int8_dynamic.onnx
+      hash: md5
+      md5: 36848f2b5c25a2ec2b1aeb03fa08be95
+      size: 24261009
+    - path: pipeline/benchmark.py
+      hash: md5
+      md5: ae0c9f2b38c6782ea560a4cf3258edf6
+      size: 5120
+    - path: pipeline/plots.py
+      hash: md5
+      md5: bf3047e32cf8a38c73ac94a918a6cdf5
+      size: 4773
+    outs:
+    - path: reports/metrics/benchmark.json
+      hash: md5
+      md5: 92294247acf81894ba4d0bc284d43ac8
+      size: 4747
+  log_mlflow:
+    cmd: python -m pipeline.log_mlflow
+    deps:
+    - path: models/onnx/fruit_resnet50_int8.onnx
+      hash: md5
+      md5: 994b7117d0c194cbcbcda0352f85a37d
+      size: 24621265
+    - path: pipeline/log_mlflow.py
+      hash: md5
+      md5: 20664813a14d9610b17f2f514f7cc0d5
+      size: 2614
+    - path: reports/metrics/benchmark.json
+      hash: md5
+      md5: 92294247acf81894ba4d0bc284d43ac8
+      size: 4747
+    - path: reports/metrics/classification_int8.json
+      hash: md5
+      md5: 8df0a076747e451b0b1356034fdb3a43
+      size: 1288
+    - path: reports/metrics/export_parity.json
+      hash: md5
+      md5: 0356cb70b561aa6707976518002d50a8
+      size: 102
+    - path: reports/metrics/train_metrics.json
+      hash: md5
+      md5: 63369a7d125fe86aec943d2f34cf0063
+      size: 212
+  evaluate:
+    cmd: python -m pipeline.evaluate
+    deps:
+    - path: models/onnx/fruit_resnet50_int8.onnx
+      hash: md5
+      md5: 994b7117d0c194cbcbcda0352f85a37d
+      size: 24621265
+    - path: pipeline/evaluate.py
+      hash: md5
+      md5: d6afb6c6ee53b898eeb910a0dba31780
+      size: 2273
+    outs:
+    - path: reports/figures_eva4/matriz_confusion_int8.png
+      hash: md5
+      md5: 3a13eba1e9a1c20a7b2b43dc5112d2c4
+      size: 45280
+    - path: reports/metrics/classification_int8.json
+      hash: md5
+      md5: 8df0a076747e451b0b1356034fdb3a43
+      size: 1288
+    - path: reports/metrics/classification_int8.txt
+      hash: md5
+      md5: c6cc9f0a40889b4988091b9a6675095a
+      size: 488

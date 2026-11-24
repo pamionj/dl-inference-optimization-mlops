@@ -1,0 +1,22 @@
+{
+  "model_name": "fruit-resnet50",
+  "model_version": "eva4-994b7117",
+  "classes": [
+    "frutilla",
+    "manzana",
+    "naranja",
+    "platano",
+    "uva"
+  ],
+  "input_name": "input_image",
+  "input_shape": [
+    null,
+    224,
+    224,
+    3
+  ],
+  "input_range": "RGB float32 [0, 255] (preprocess_input incluido en el grafo)",
+  "quantization": "INT8 estática QDQ por canal (ONNX Runtime)",
+  "calibration_images": 40,
+  "base_architecture": "ResNet50 (ImageNet) + GAP + Dropout + Dense(256) + Softmax(5)"
+}

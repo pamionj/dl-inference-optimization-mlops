@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Modelos pesados (opcional si superan límites de Git)
+# models/*.keras
+# models/*.h5
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs y temporales
+*.log
+
+
+# Eva4: artefactos pesados versionados con DVC (no en git)
+models/*.keras
+models/onnx/fruit_resnet50_fp32.onnx
+models/onnx/fruit_resnet50_fp32_prep.onnx
+models/onnx/fruit_resnet50_int8_dynamic.onnx
+mlruns/
+pytest-report.xml
+.ruff_cache/
+.pytest_cache/
+mlflow.db
+mlartifacts/
+
+# Archivos locales de entrega/pauta y copia duplicada en raíz (el informe vive en reports/)
+/Eva4MachineLearning.pdf
+/EvaLuacion3MachineLearning.docx
+/Informe_Tecnico_Evaluacion4_MachineLearning.docx
+/dataset_frutas.zip

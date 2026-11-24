@@ -1,0 +1,32 @@
+{
+    "prediction": {
+        "filename": "platano_001.jpg",
+        "label": "platano",
+        "confidence": 0.901736,
+        "low_confidence": false,
+        "top_k": [
+            {
+                "label": "platano",
+                "probability": 0.901736
+            },
+            {
+                "label": "manzana",
+                "probability": 0.055231
+            },
+            {
+                "label": "uva",
+                "probability": 0.029397
+            }
+        ],
+        "probabilities": {
+            "frutilla": 0.005308,
+            "manzana": 0.055231,
+            "naranja": 0.008328,
+            "platano": 0.901736,
+            "uva": 0.029397
+        }
+    },
+    "model_version": "eva4-994b7117",
+    "inference_ms": 33.85,
+    "total_ms": 36.36
+}

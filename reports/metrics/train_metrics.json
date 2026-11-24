@@ -1,0 +1,14 @@
+{
+  "val_accuracy": 0.7,
+  "train_samples": 80,
+  "val_samples": 20,
+  "classes": [
+    "frutilla",
+    "manzana",
+    "naranja",
+    "platano",
+    "uva"
+  ],
+  "train_time_s": 53.3,
+  "params_total": 24113541
+}

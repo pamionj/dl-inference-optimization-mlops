@@ -1,0 +1,166 @@
+{
+  "hardware": {
+    "cpu": "x86_64",
+    "logical_cores": 8,
+    "ram_gb": 31.3,
+    "python": "3.10.12"
+  },
+  "results": {
+    "keras_fp32": {
+      "variant": "keras_fp32",
+      "label": "TensorFlow/Keras FP32 (Eva3)",
+      "size_mb": 138.6143856048584,
+      "load_time_s": 46.6983165019999,
+      "rss_model_mb": 642.28125,
+      "rss_peak_mb": 897.6875,
+      "accuracy_val": 0.7,
+      "latency_ms": {
+        "mean": 109.34564986000623,
+        "p50": 107.83969150008943,
+        "p95": 126.16514984996456,
+        "p99": 134.45948207996256
+      },
+      "throughput": {
+        "1": {
+          "batch_latency_ms": 105.74277615624794,
+          "img_per_s": 9.456910782466853
+        },
+        "2": {
+          "batch_latency_ms": 133.38143274999936,
+          "img_per_s": 14.994590766982217
+        },
+        "4": {
+          "batch_latency_ms": 162.35721112499846,
+          "img_per_s": 24.637033195405216
+        },
+        "8": {
+          "batch_latency_ms": 219.47085099998276,
+          "img_per_s": 36.45130988260773
+        },
+        "16": {
+          "batch_latency_ms": 609.7264366666574,
+          "img_per_s": 26.241276477154518
+        }
+      },
+      "top1_agreement_vs_fp32": 1.0,
+      "max_abs_prob_diff_vs_fp32": 3.8743019104003906e-07
+    },
+    "onnx_fp32": {
+      "variant": "onnx_fp32",
+      "label": "ONNX Runtime FP32",
+      "size_mb": 91.62315559387207,
+      "load_time_s": 0.24487422500010325,
+      "rss_model_mb": 305.58203125,
+      "rss_peak_mb": 572.37109375,
+      "accuracy_val": 0.7,
+      "latency_ms": {
+        "mean": 19.900733759993727,
+        "p50": 18.966512500014687,
+        "p95": 33.18342545003361,
+        "p99": 44.74850403014443
+      },
+      "throughput": {
+        "1": {
+          "batch_latency_ms": 15.419776124993234,
+          "img_per_s": 64.85178461048758
+        },
+        "2": {
+          "batch_latency_ms": 25.586690062496587,
+          "img_per_s": 78.16563983520004
+        },
+        "4": {
+          "batch_latency_ms": 45.82613675000857,
+          "img_per_s": 87.28643267096373
+        },
+        "8": {
+          "batch_latency_ms": 119.74330924999776,
+          "img_per_s": 66.80957833976139
+        },
+        "16": {
+          "batch_latency_ms": 275.4873169999428,
+          "img_per_s": 58.07889878285512
+        }
+      },
+      "top1_agreement_vs_fp32": 1.0,
+      "max_abs_prob_diff_vs_fp32": 0.0
+    },
+    "onnx_int8_dynamic": {
+      "variant": "onnx_int8_dynamic",
+      "label": "ONNX Runtime INT8 dinámica",
+      "size_mb": 23.13710117340088,
+      "load_time_s": 0.0977278519999345,
+      "rss_model_mb": 65.06640625,
+      "rss_peak_mb": 573.609375,
+      "accuracy_val": 0.7,
+      "latency_ms": {
+        "mean": 23.87927819999277,
+        "p50": 21.578214999976808,
+        "p95": 36.6974911000284,
+        "p99": 40.10026945990832
+      },
+      "throughput": {
+        "1": {
+          "batch_latency_ms": 27.35155996874994,
+          "img_per_s": 36.5609859599428
+        },
+        "2": {
+          "batch_latency_ms": 58.482340687504575,
+          "img_per_s": 34.19835759801117
+        },
+        "4": {
+          "batch_latency_ms": 101.3513093749907,
+          "img_per_s": 39.46668301245484
+        },
+        "8": {
+          "batch_latency_ms": 217.4790792500403,
+          "img_per_s": 36.78514746148171
+        },
+        "16": {
+          "batch_latency_ms": 313.75788700006524,
+          "img_per_s": 50.99473403834044
+        }
+      },
+      "top1_agreement_vs_fp32": 1.0,
+      "max_abs_prob_diff_vs_fp32": 0.04807323217391968
+    },
+    "onnx_int8_static": {
+      "variant": "onnx_int8_static",
+      "label": "ONNX Runtime INT8 estática (QDQ)",
+      "size_mb": 23.48066806793213,
+      "load_time_s": 0.12123983600008614,
+      "rss_model_mb": 70.9453125,
+      "rss_peak_mb": 391.11328125,
+      "accuracy_val": 0.7,
+      "latency_ms": {
+        "mean": 7.928637830007119,
+        "p50": 7.652919500060307,
+        "p95": 8.771102250125296,
+        "p99": 11.246973590157317
+      },
+      "throughput": {
+        "1": {
+          "batch_latency_ms": 10.113846906243396,
+          "img_per_s": 98.87434615830385
+        },
+        "2": {
+          "batch_latency_ms": 14.51699199999723,
+          "img_per_s": 137.76958752890278
+        },
+        "4": {
+          "batch_latency_ms": 27.06422537499975,
+          "img_per_s": 147.79658181885196
+        },
+        "8": {
+          "batch_latency_ms": 53.32574249996469,
+          "img_per_s": 150.02135225787615
+        },
+        "16": {
+          "batch_latency_ms": 119.97248333333725,
+          "img_per_s": 133.36391441981607
+        }
+      },
+      "top1_agreement_vs_fp32": 1.0,
+      "max_abs_prob_diff_vs_fp32": 0.19938549399375916
+    }
+  }
+}

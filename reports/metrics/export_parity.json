@@ -1,0 +1,5 @@
+{
+  "opset": 17,
+  "max_abs_diff_vs_keras": 3.8743019104003906e-07,
+  "top1_agreement_vs_keras": 1.0
+}

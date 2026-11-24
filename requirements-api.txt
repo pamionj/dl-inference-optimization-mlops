@@ -1,0 +1,8 @@
+# Dependencias mínimas del servicio de inferencia (imagen Docker, sin TensorFlow)
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+python-multipart==0.0.20
+onnxruntime==1.17.3
+numpy==1.26.4
+pillow==10.4.0
+pydantic==2.10.4

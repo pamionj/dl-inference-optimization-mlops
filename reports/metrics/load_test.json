@@ -1,0 +1,22 @@
+{
+  "sin_batching": {
+    "concurrency": 16,
+    "requests": 320,
+    "errors": 0,
+    "throughput_rps": 31.349793836295245,
+    "p50_ms": 499.32268700001714,
+    "p95_ms": 788.916766100192,
+    "p99_ms": 887.6527407199934,
+    "avg_dynamic_batch_size": 0.0
+  },
+  "con_batching": {
+    "concurrency": 16,
+    "requests": 320,
+    "errors": 0,
+    "throughput_rps": 32.811116214884585,
+    "p50_ms": 444.4734825000296,
+    "p95_ms": 604.1667014500717,
+    "p99_ms": 706.5829180100718,
+    "avg_dynamic_batch_size": 7.63
+  }
+}

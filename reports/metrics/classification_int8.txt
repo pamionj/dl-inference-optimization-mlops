@@ -1,0 +1,11 @@
+              precision    recall  f1-score   support
+
+    frutilla       1.00      0.75      0.86         4
+     manzana       0.33      0.50      0.40         4
+     naranja       1.00      0.50      0.67         4
+     platano       0.67      1.00      0.80         4
+         uva       1.00      0.75      0.86         4
+
+    accuracy                           0.70        20
+   macro avg       0.80      0.70      0.72        20
+weighted avg       0.80      0.70      0.72        20

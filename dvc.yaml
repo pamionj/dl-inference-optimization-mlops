@@ -1,0 +1,79 @@
+# Pipeline MLOps reproducible: `dvc repro` reconstruye cada artefacto cuando cambian
+# sus dependencias (datos, código o parámetros). Los hashes quedan en dvc.lock.
+stages:
+  train:
+    cmd: python -m pipeline.train
+    deps:
+      - data/dataset_frutas
+      - pipeline/train.py
+      - pipeline/common.py
+      - app/preprocessing.py
+    params:
+      - data
+      - augmentation
+      - train
+    outs:
+      - models/fruit_resnet50.keras
+    metrics:
+      - reports/metrics/train_metrics.json:
+          cache: false
+    plots:
+      - reports/metrics/train_history.json:
+          cache: false
+  export_onnx:
+    cmd: python -m pipeline.export_onnx
+    deps:
+      - models/fruit_resnet50.keras
+      - pipeline/export_onnx.py
+    outs:
+      - models/onnx/fruit_resnet50_fp32.onnx
+    metrics:
+      - reports/metrics/export_parity.json:
+          cache: false
+  quantize:
+    cmd: python -m pipeline.quantize
+    deps:
+      - models/onnx/fruit_resnet50_fp32.onnx
+      - pipeline/quantize.py
+    params:
+      - quantize
+    outs:
+      - models/onnx/fruit_resnet50_int8.onnx:
+          cache: false
+      - models/onnx/model_metadata.json:
+          cache: false
+      - models/onnx/fruit_resnet50_int8_dynamic.onnx
+  benchmark:
+    cmd: python -m pipeline.benchmark && python -m pipeline.plots
+    deps:
+      - models/fruit_resnet50.keras
+      - models/onnx/fruit_resnet50_fp32.onnx
+      - models/onnx/fruit_resnet50_int8.onnx
+      - models/onnx/fruit_resnet50_int8_dynamic.onnx
+      - pipeline/benchmark.py
+      - pipeline/plots.py
+    metrics:
+      - reports/metrics/benchmark.json:
+          cache: false
+  evaluate:
+    cmd: python -m pipeline.evaluate
+    deps:
+      - models/onnx/fruit_resnet50_int8.onnx
+      - pipeline/evaluate.py
+    metrics:
+      - reports/metrics/classification_int8.json:
+          cache: false
+    outs:
+      - reports/metrics/classification_int8.txt:
+          cache: false
+      - reports/figures_eva4/matriz_confusion_int8.png:
+          cache: false
+  log_mlflow:
+    cmd: python -m pipeline.log_mlflow
+    deps:
+      - reports/metrics/train_metrics.json
+      - reports/metrics/export_parity.json
+      - reports/metrics/benchmark.json
+      - reports/metrics/classification_int8.json
+      - models/onnx/fruit_resnet50_int8.onnx
+      - pipeline/log_mlflow.py

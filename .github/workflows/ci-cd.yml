@@ -1,0 +1,86 @@
+name: CI/CD - Fruit Classifier (Eva4)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/fruit-classifier-api
+
+jobs:
+  test:
+    name: Lint + pruebas + quality gates del modelo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - name: Instalar dependencias
+        run: pip install -r requirements-dev.txt
+      - name: Lint (ruff)
+        run: ruff check app tests pipeline
+      - name: Pruebas funcionales, batching, exactitud, latencia e integridad DVC
+        run: pytest -v --junitxml=pytest-report.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pytest-report
+          path: pytest-report.xml
+
+  docker:
+    name: Build + smoke test del contenedor
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construir imagen
+        run: docker build -t fruit-api:ci .
+      - name: Levantar contenedor
+        run: |
+          docker run -d --name fruit-api -p 8000:8000 fruit-api:ci
+          for i in $(seq 1 30); do curl -sf http://localhost:8000/ready && break; sleep 2; done
+      - name: Smoke test de inferencia
+        run: |
+          curl -sf http://localhost:8000/model/info | tee model_info.json
+          curl -sf -F "file=@data/dataset_frutas/platano/platano_001.jpg;type=image/jpeg" \
+            http://localhost:8000/predict | tee prediction.json
+          python3 -c "import json; r=json.load(open('prediction.json')); assert r['total_ms'] < 1000, r; print('OK', r['prediction']['label'], r['total_ms'], 'ms')"
+          code=$(curl -s -o /dev/null -w "%{http_code}" -F "file=@README.md;type=text/plain" http://localhost:8000/predict)
+          test "$code" = "415"
+      - name: Logs del contenedor
+        if: always()
+        run: docker logs fruit-api
+      - name: Publicar imagen en GHCR (solo main)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          OWNER=$(echo "$IMAGE_NAME" | tr '[:upper:]' '[:lower:]')
+          docker tag fruit-api:ci "$OWNER:${GITHUB_SHA::7}"
+          docker tag fruit-api:ci "$OWNER:latest"
+          docker push "$OWNER:${GITHUB_SHA::7}"
+          docker push "$OWNER:latest"
+
+  deploy:
+    name: Despliegue continuo (Render, opcional)
+    runs-on: ubuntu-latest
+    needs: docker
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Disparar deploy hook
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK" ]; then
+            echo "Secreto RENDER_DEPLOY_HOOK no configurado: se omite el despliegue en la nube."
+          else
+            curl -sf -X POST "$RENDER_DEPLOY_HOOK" && echo "Deploy solicitado."
+          fi
